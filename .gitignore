@@ -1,0 +1,23 @@
+node_modules/
+dist/
+
+# server
+server/.env
+server/prisma/dev.db
+server/prisma/dev.db-journal
+
+# app (Expo)
+app/.expo/
+app/dist/
+app/web-build/
+app/*.jks
+app/*.p8
+app/*.p12
+app/*.key
+app/*.mobileprovision
+app/npm-debug.*
+app/*.orig.*
+
+# misc
+.DS_Store
+*.log

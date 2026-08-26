@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "expo-app",
+      "runtimeExecutable": "C:\\Users\\Nicholas Seabright\\OneDrive\\Desktop\\FriendRank\\run-web.cmd",
+      "runtimeArgs": [],
+      "port": 8081
+    }
+  ]
+}

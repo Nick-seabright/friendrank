@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Kept as plain strings (not native Prisma enums) since this schema started on
+// SQLite, which has no enum support; constrained to fixed value sets by the
+// zod schemas at the API boundary instead:
+// Polarity: "POSITIVE" | "NEGATIVE"
+// PointStatus: "PENDING" | "ACCEPTED" | "DISPUTED" | "EXPIRED"
+// LeaderboardPeriod: "WEEKLY" | "MONTHLY" | "MANUAL"
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  displayName  String
+  emoji        String   @default("🦆")
+  pushToken    String?
+  createdAt    DateTime @default(now())
+
+  memberships    GroupMembership[]
+  sentPoints     PointEntry[]      @relation("SentPoints")
+  receivedPoints PointEntry[]      @relation("ReceivedPoints")
+  createdGroups  Group[]           @relation("CreatedGroups")
+}
+
+model Group {
+  id               String            @id @default(cuid())
+  name             String
+  inviteCode       String            @unique
+  leaderboardPeriod String            @default("MANUAL")
+  periodStartAt    DateTime          @default(now())
+  createdAt        DateTime          @default(now())
+  createdById      String
+  createdBy        User              @relation("CreatedGroups", fields: [createdById], references: [id])
+
+  memberships GroupMembership[]
+  points      PointEntry[]
+}
+
+model GroupMembership {
+  id       String   @id @default(cuid())
+  userId   String
+  groupId  String
+  joinedAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id])
+  group Group @relation(fields: [groupId], references: [id])
+
+  @@unique([userId, groupId])
+}
+
+model Preset {
+  id              String   @id @default(cuid())
+  label           String
+  defaultValue    Int
+  polarity        String
+  isCustom        Boolean  @default(false)
+  customCap       Int?
+  autoAcceptHours Int?
+
+  points PointEntry[]
+}
+
+model PointEntry {
+  id          String      @id @default(cuid())
+  groupId     String
+  senderId    String
+  recipientId String
+  presetId    String
+  value       Int
+  note        String?
+  status      String      @default("PENDING")
+  createdAt   DateTime    @default(now())
+  respondedAt DateTime?
+
+  group     Group  @relation(fields: [groupId], references: [id])
+  sender    User   @relation("SentPoints", fields: [senderId], references: [id])
+  recipient User   @relation("ReceivedPoints", fields: [recipientId], references: [id])
+  preset    Preset @relation(fields: [presetId], references: [id])
+}
