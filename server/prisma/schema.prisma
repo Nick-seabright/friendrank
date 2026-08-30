@@ -3,8 +3,11 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  // Neon's default URL is pooled (PgBouncer); migrations run more reliably
+  // over a direct connection, which Neon also provides.
+  directUrl = env("DATABASE_URL_UNPOOLED")
 }
 
 // Kept as plain strings (not native Prisma enums) since this schema started on
