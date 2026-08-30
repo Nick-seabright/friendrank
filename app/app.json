@@ -31,6 +31,18 @@
           "color": "#FF6B6B"
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "30f6a617-86a0-446c-ab23-145ca2ef7a18"
+      }
+    },
+    "owner": "nickseas-team",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/30f6a617-86a0-446c-ab23-145ca2ef7a18"
+    }
   }
 }
