@@ -21,12 +21,15 @@ function guessApiUrl(): string {
   if (process.env.EXPO_PUBLIC_API_URL) {
     return process.env.EXPO_PUBLIC_API_URL;
   }
+  // Only trust the dev-server-derived LAN address in actual local dev (Expo
+  // Go connected to `expo start`) — a published EAS Update has no dev server,
+  // so it falls through to the real hosted backend below.
   const hostUri = Constants.expoConfig?.hostUri || (Constants as any).manifest2?.extra?.expoClient?.hostUri;
-  if (hostUri) {
+  if (hostUri && __DEV__) {
     const host = hostUri.split(":")[0];
     return `http://${host}:4000`;
   }
-  return "http://localhost:4000";
+  return "https://friendrank-api.onrender.com";
 }
 
 export const API_URL = guessApiUrl();
